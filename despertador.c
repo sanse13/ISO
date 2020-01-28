@@ -3,8 +3,17 @@
 
 int main(int argc, char* argv[]){
 
-        if (argc < 2){
-                printf("Error de argumentos.\n");
+
+        if (argc == 2){
+
+                printf("Falta el argumento del mensaje. Pruebe de nuevo.\n");
+                exit(2);
+
+        }
+
+
+        if (argc < 3){
+                printf("Error de argumentos. El uso es ./despertador [SEGUNDOS] [MENSAJE1] [MENSAJE2] ...\n");
                 exit(1);
         }
 
