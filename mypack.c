@@ -31,12 +31,12 @@ struct s_info {
            unsigned long TamComp;           // Tamanio del fichero comprimido. Si los datos no estan
                                             // comprimidos, su valor es el mismo de TamOri-
            char FileName[MAX_FILE_NAME];    // Nombre del fichero origen 
-}sInfo;
+};
 
 struct  s_header {
            struct s_info *InfoF;                 // Información del fichero
            char RestoHeader[RESTO_HEADER];       // ToDo...  
-}sHeader;
+};
 
 
 int main(int argc, char* argv[]){
@@ -53,11 +53,15 @@ int main(int argc, char* argv[]){
 
     if (sourceFileID == -1){
         write(2, MSG2, strlen(MSG2));
+        close(sourceFileID);
+        close(destFileID);
         _exit(ERR2);
     }
 
     if (access(argv[2], F_OK | W_OK) == -1){
         write(2, MSG3, strlen(MSG3));
+        close(sourceFileID);
+        close(destFileID);
         _exit(ERR3);
     }
 
@@ -80,7 +84,7 @@ int main(int argc, char* argv[]){
 
 
     write(destFileID, "Tipo del comprimido: ", strlen("Tipo del comprimido: "));
-    write(destFileID, &s_h->InfoF->Compri, strlen(&s_h->InfoF->Compri));
+    write(destFileID, &s_h->InfoF->Compri, 1);
     write(destFileID, "\n", 1);
 
     write(destFileID, "Nombre del archivo: ", strlen("Nombre del archivo: "));
@@ -88,7 +92,7 @@ int main(int argc, char* argv[]){
     write(destFileID, "\n", 1);
 
     write(destFileID, "Tipo: ", strlen("Tipo: "));
-    write(destFileID, &s_h->InfoF->Tipo, strlen(&s_h->InfoF->Tipo)-1);
+    write(destFileID, &s_h->InfoF->Tipo, 1); 
     write(destFileID, "\n", 1);
 
     write(destFileID, "Tamaño del fichero origen: ", strlen("Tamaño del fichero origen: "));
