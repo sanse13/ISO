@@ -17,7 +17,7 @@
 #define ERR3 3
 #define ERR4 4
 
-#define MSG1 "Error en los argumenots\n"
+#define MSG1 "Error en los argumentos\n"
 #define MSG2 "No existe el fichero de origen\n"
 #define MSG3 "No se dispone de permisos para esta operación. No se dispone de permisos para crear o modificar fich_destino\n"
 #define MSG4 "Otro tipo de errores\n"
@@ -62,6 +62,8 @@ int main(int argc, char* argv[]){
     }
 
     //otros errores (ERR4)
+    //¿header? campo a campo o de golpe? 
+    //error 4 -> ________???
 
     strcpy(s_h->InfoF->FileName, argv[1]);
     s_h->InfoF->Compri = 'N';
@@ -74,6 +76,8 @@ int main(int argc, char* argv[]){
     int tam = (int)s_h->InfoF->TamOri;
     char str[TAM_BUFFER];
     sprintf(str, "%d", tam);
+
+
 
     write(destFileID, "Tipo del comprimido: ", strlen("Tipo del comprimido: "));
     write(destFileID, &s_h->InfoF->Compri, strlen(&s_h->InfoF->Compri));
@@ -99,7 +103,7 @@ int main(int argc, char* argv[]){
     write(destFileID, "\n", strlen("\n"));
 
     int n;
-    char buf[TAM_BUFFER];    
+    char buf[TAM_BUFFER];   
 
     if ( (n = read(sourceFileID, buf, TAM_BUFFER)) > 0)
         write(destFileID, buf, n);
