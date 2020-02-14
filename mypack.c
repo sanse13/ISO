@@ -51,7 +51,7 @@ int main(int argc, char* argv[]){
     int sourceFileID = open(argv[1], O_RDONLY);
     int destFileID = open(argv[2], O_CREAT | O_RDWR, 0644);
 
-    if (sourceFileID == -1){
+    if (sourceFileID == -1){ 
         write(2, MSG2, strlen(MSG2));
         close(sourceFileID);
         close(destFileID);
@@ -66,17 +66,17 @@ int main(int argc, char* argv[]){
     }
 
     //otros errores (ERR4)
-    //¿header? campo a campo o de golpe? 
     //error 4 -> ________???
 
     strcpy(header.InfoF.FileName, argv[1]);
     header.InfoF.Compri = 'N';
     header.InfoF.Tipo = 'Z';
+    header.InfoF.TamOri = lseek(sourceFileID, 0L, SEEK_END);
+    header.InfoF.TamComp = header.InfoF.TamOri; //sera modificado en futuras versiones
 
-
-    write(destFileID, &header, sizeof(header));
     write(destFileID, "\n", 1);
 
+    write(destFileID, &header, sizeof(header));
     int n;
     char buf[TAM_BUFFER];   
 
