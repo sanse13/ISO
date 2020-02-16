@@ -16,12 +16,14 @@
 #define E_DESCO "Otro tipo de errores\n"
 #define ERR_DESCO 3
 
-int extraer_fichero(char * file_mypackzip, unsigned long Posicion){
+int extraer_fichero(char * file_mypackzip, unsigned long Posicion)
+{
     int sourceFileID, destFileID, actual_reg, n;
     struct s_header header;
     char buf[TAM_BUFFER];
 
-    if ( (sourceFileID = open(file_mypackzip, O_RDONLY)) == -1 ){
+    if ( (sourceFileID = open(file_mypackzip, O_RDONLY)) == -1 )
+    {
         write(2, E_OPEN, strlen(E_OPEN));
         _exit(ERR_OPEN);
     }
@@ -33,8 +35,6 @@ int extraer_fichero(char * file_mypackzip, unsigned long Posicion){
             write(2, E_POS, strlen(E_POS));
             _exit(ERR_POS);
         }
-
-        read(sourceFileID, buf, sizeof(header));
     }
 
     read(sourceFileID, &header, sizeof(header));
@@ -43,8 +43,12 @@ int extraer_fichero(char * file_mypackzip, unsigned long Posicion){
     printf("Tipo: %c\n", header.InfoF.Tipo);
 
     //crear fichero con el contenido del fichero extraido
+    destFileID = open(header.InfoF.FileName, O_CREAT | O_WRONLY, 0644);
+    n = read(sourceFileID, buf, sizeof(header));
+    write(destFileID, buf, n);
 
     close(sourceFileID);
+    close(destFileID);
     
     return 0;
 
