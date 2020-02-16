@@ -31,3 +31,4 @@ struct  s_header {
            char RestoHeader[RESTO_HEADER];       // ToDo...  
 };
 
+int extraer_fichero(char * file_mypackzip, unsigned long Posicion);
