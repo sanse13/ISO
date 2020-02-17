@@ -17,20 +17,20 @@ int main(int argc, char* argv[]){
     }
 
     int sourceFileID = open(argv[1], O_RDONLY);
-
-    if (access(argv[2], W_OK) == -1){
-        write(2, MSG3, strlen(MSG3));
-        close(sourceFileID);
-        _exit(ERR3);
-    }
-
-    int destFileID = open(argv[2], O_CREAT | O_RDWR, 0644);
+    
+    int destFileID = open(argv[2], O_CREAT | O_RDWR, 0000);
 
     if (sourceFileID == -1){ 
         write(2, MSG2, strlen(MSG2));
         close(sourceFileID);
         close(destFileID);
         _exit(ERR2);
+    }
+
+    if (access(argv[2], W_OK) == -1){
+        write(2, MSG3, strlen(MSG3));
+        close(sourceFileID);
+        _exit(ERR3);
     }
 
     strcpy(header.InfoF.FileName, argv[1]);
