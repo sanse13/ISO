@@ -17,6 +17,12 @@ int main(int argc, char* argv[]){
     }
 
     int sourceFileID = open(argv[1], O_RDONLY);
+
+    if (access(argv[2], W_OK) == -1){
+        write(2, MSG3, strlen(MSG3));
+        close(sourceFileID);
+        _exit(ERR3);
+    }
     int destFileID = open(argv[2], O_CREAT | O_RDWR, 0644);
 
     if (sourceFileID == -1){ 
@@ -26,7 +32,7 @@ int main(int argc, char* argv[]){
         _exit(ERR2);
     }
 
-    if (access(argv[2], F_OK | W_OK) == -1){
+    if (access(argv[2], F_OK) == -1){
         write(2, MSG3, strlen(MSG3));
         close(sourceFileID);
         close(destFileID);
