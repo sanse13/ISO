@@ -11,6 +11,13 @@ int main(int argc, char* argv[]){
 
     struct s_header header;
 
+    /*if (strcmp(argv[1], "-e") == 0){
+        //./mypack e FILE_MYPACKZIP POSICION
+        int reg = atoi(argv[3]);
+        extraer_fichero(argv[2], reg);
+        return 0;
+    }*/
+
     if (argc < 3){
         write(2, MSG1, strlen(MSG1));
         _exit(ERR1);
@@ -23,6 +30,7 @@ int main(int argc, char* argv[]){
         close(sourceFileID);
         _exit(ERR3);
     }
+    
     int destFileID = open(argv[2], O_CREAT | O_RDWR, 0644);
 
     if (sourceFileID == -1){ 
@@ -30,13 +38,6 @@ int main(int argc, char* argv[]){
         close(sourceFileID);
         close(destFileID);
         _exit(ERR2);
-    }
-
-    if (access(argv[2], F_OK) == -1){
-        write(2, MSG3, strlen(MSG3));
-        close(sourceFileID);
-        close(destFileID);
-        _exit(ERR3);
     }
 
     strcpy(header.InfoF.FileName, argv[1]);
