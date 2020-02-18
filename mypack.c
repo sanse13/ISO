@@ -18,7 +18,7 @@ int main(int argc, char* argv[]){
 
     int sourceFileID = open(argv[1], O_RDONLY);
     
-    int destFileID = open(argv[2], O_CREAT | O_RDWR, 0664);
+    int destFileID = open(argv[2], O_CREAT | O_RDWR | O_TRUNC, 0644);
 
     if (sourceFileID == -1){ 
         write(2, ERR_MSG2, strlen(ERR_MSG2));
