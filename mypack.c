@@ -12,23 +12,23 @@ int main(int argc, char* argv[]){
     struct s_header header;
 
     if (argc < 3){
-        write(2, MSG1, strlen(MSG1));
+        write(2, ERR_MSG1, strlen(ERR_MSG1));
         _exit(ERR1);
     }
 
     int sourceFileID = open(argv[1], O_RDONLY);
     
-    int destFileID = open(argv[2], O_CREAT | O_RDWR, 0000);
+    int destFileID = open(argv[2], O_CREAT | O_RDWR, 0664);
 
     if (sourceFileID == -1){ 
-        write(2, MSG2, strlen(MSG2));
+        write(2, ERR_MSG2, strlen(ERR_MSG2));
         close(sourceFileID);
         close(destFileID);
         _exit(ERR2);
     }
 
     if (access(argv[2], W_OK) == -1){
-        write(2, MSG3, strlen(MSG3));
+        write(2, ERR_MSG3, strlen(ERR_MSG3));
         close(sourceFileID);
         _exit(ERR3);
     }
