@@ -10,10 +10,10 @@
 #define ERR3 3
 #define ERR4 4
 
-#define MSG1 "Error en los argumentos\n"
-#define MSG2 "No existe el fichero de origen\n"
-#define MSG3 "No se dispone de permisos para esta operación. No se dispone de permisos para crear o modificar fich_destino\n"
-#define MSG4 "Otro tipo de errores\n"
+#define ERR_MSG1 "Error en los argumentos\n"
+#define ERR_MSG2 "No existe el fichero de origen\n"
+#define ERR_MSG3 "No se dispone de permisos para esta operación. No se dispone de permisos para crear o modificar fich_destino\n"
+#define ERR_MSG4 "Otro tipo de errores\n"
 
 
 struct s_info {
