@@ -24,7 +24,7 @@ int main(int argc, char* argv[]){
         write(2, ERR_MSG2, strlen(ERR_MSG2));
         close(sourceFileID);
         close(destFileID);
-        _exit(ERR2);
+        return(ERR2);
     }
 
     if (access(argv[2], W_OK) == -1){
@@ -52,5 +52,6 @@ int main(int argc, char* argv[]){
     close(sourceFileID);
     close(destFileID);
 
+    
     return 0;
 }
