@@ -22,10 +22,13 @@ int extraer_fichero(char * file_mypackzip, unsigned long Posicion)
     struct s_header header;
     char buf[TAM_BUFFER];
 
+    //mensajes de error no
+    //no usar exit
+
     if ( (sourceFileID = open(file_mypackzip, O_RDONLY)) == -1 )
     {
         write(2, E_OPEN, strlen(E_OPEN));
-        _exit(ERR_OPEN);
+        return ERR_OPEN;
     }
 
     for (actual_reg = 0; actual_reg < Posicion; actual_reg++)
@@ -33,18 +36,19 @@ int extraer_fichero(char * file_mypackzip, unsigned long Posicion)
         if ( (n = read(sourceFileID, &header, sizeof(header)) ) <= 0 )
         {
             write(2, E_POS, strlen(E_POS));
-            _exit(ERR_POS);
+            return ERR_POS;
         }
+        //lseek o read??
+        lseek(sourceFileID, header.InfoF.TamOri, SEEK_CUR);
     }
 
     read(sourceFileID, &header, sizeof(header));
 
     printf("FileName: %s\n", header.InfoF.FileName);
-    printf("Tipo: %c\n", header.InfoF.Tipo);
 
     //crear fichero con el contenido del fichero extraido
     destFileID = open(header.InfoF.FileName, O_CREAT | O_WRONLY, 0644);
-    n = read(sourceFileID, buf, sizeof(header));
+    n = read(sourceFileID, buf, header.InfoF.TamOri);
     write(destFileID, buf, n);
 
     close(sourceFileID);
