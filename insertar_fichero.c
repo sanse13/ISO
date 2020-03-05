@@ -16,20 +16,31 @@
 #define E_OPEN2 "No se puede abrir  fich_origen.\n"
 #define ERR_OPEN2 3
 
-#define TAM 5 //TAM FICHEROS??
-
+#define TAM 15 //TAM FICHEROS??
 //insertar con el header??
 
 int insertar_fichero(char * fich_origen, long Posicion, char * file_mypackzip){
 
     struct s_header header;
+    struct s_header header2;
 
-    int sourceFileID = open(fich_origen, O_RDONLY, 0644);
-    int destFileID = open(file_mypackzip, O_CREAT | O_RDWR, 0644); //el comprimido
+    int sourceFileID = open(fich_origen, O_RDONLY);
+    int destFileID = open(file_mypackzip, O_CREAT | O_RDWR, 0777); //el comprimido
+    int auxFileID;
+    static char template[] = "/tmp/myFileXXXXXX";
+    char fname[1024];
+    strcpy(fname, template);
+    auxFileID = mkstemp(fname);
 
-    int n;
+    int n, n_aux, i;
     int actual_reg;
     char buf[TAM_BUFFER];
+
+    while ( (n = read(destFileID, buf, TAM_BUFFER)) > 0 )
+        write(auxFileID, buf, n);
+
+    lseek(auxFileID, 0L, SEEK_SET);
+    lseek(destFileID, 0L, SEEK_SET);
 
     strcpy(header.InfoF.FileName, fich_origen);
     header.InfoF.Tipo = 'Z';
@@ -41,7 +52,7 @@ int insertar_fichero(char * fich_origen, long Posicion, char * file_mypackzip){
     
 
     //insertando al final
-    if (Posicion == -1 || Posicion > TAM-1){ //inserta al final
+    if (Posicion == -1){ //inserta al final
 
     lseek(destFileID, 0L, SEEK_END);
 
@@ -50,14 +61,29 @@ int insertar_fichero(char * fich_origen, long Posicion, char * file_mypackzip){
     while ( (n = read(sourceFileID, buf, TAM_BUFFER)) > 0)
         write(destFileID, buf, n);
 
-    close(sourceFileID);
-    close(destFileID);
-
-    return 0;
-
     } else { //insertar en Posicion. 
+        for (i = 0; i < Posicion; i++){
+            if ((n_aux = read(auxFileID, &header2, sizeof(header))) <=1 )
+                break;
+            write(destFileID, &header2, sizeof(header2));
+            n_aux = read(auxFileID, buf, header2.InfoF.TamOri);
+            write(destFileID, buf, n_aux);
+        }
 
+        write(destFileID, &header, sizeof(header));
+        while ( (n = read(sourceFileID, buf, TAM_BUFFER)) > 0)
+            write(destFileID, buf, n);
+
+        while ((n = read(auxFileID, buf, TAM_BUFFER))>0)
+            write(destFileID, buf, n);
         
     }
+
+    close(sourceFileID);
+    close(destFileID);
+    close(auxFileID);
+    unlink(fname);
+
+    return 0;
 
 }
