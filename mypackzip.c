@@ -16,6 +16,20 @@ int main(int argc, char* argv[]){
         _exit(ERR1);
     }
 
+    if (strcmp(argv[1], "-e") == 0){
+        //./mypackzip -e comprimido Posicion
+        int pos = atoi(argv[3]);
+        extraer_fichero(argv[2], pos);
+        return 0;
+    }
+
+    if (strcmp(argv[1], "-i") == 0){
+        //./mypackzip -i origen Posicion comprimido
+        int pos = atoi(argv[3]);
+        insertar_fichero(argv[2], pos, argv[4]);
+        return 0;
+    }
+
     int sourceFileID = open(argv[1], O_RDONLY);
     
     int destFileID = open(argv[2], O_CREAT | O_RDWR | O_TRUNC, 0644);
@@ -24,7 +38,7 @@ int main(int argc, char* argv[]){
         write(2, ERR_MSG2, strlen(ERR_MSG2));
         close(sourceFileID);
         close(destFileID);
-        return(ERR2);
+        _exit(ERR2);
     }
 
     if (access(argv[2], W_OK) == -1){
@@ -52,6 +66,5 @@ int main(int argc, char* argv[]){
     close(sourceFileID);
     close(destFileID);
 
-    
     return 0;
 }
