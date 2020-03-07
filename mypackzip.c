@@ -7,9 +7,20 @@
 #include <errno.h>
 #include "util.h"
 
+void help(){
+    printf("-e\t\t Extrae un fichero del fichero comprimido.\n");
+    printf("-i\t\t Inserta un fichero en el fichero comprimido.\n");
+    printf("-d\t\t Inserta un directorio en el fichero comprimido.\n");
+}
+
 int main(int argc, char* argv[]){
 
     struct s_header header;
+
+    if (strcmp(argv[1], "help") == 0) {
+        help();
+        return 0;
+    }
 
     if (argc < 3){
         write(2, ERR_MSG1, strlen(ERR_MSG1));
@@ -27,6 +38,12 @@ int main(int argc, char* argv[]){
         //./mypackzip -i origen Posicion comprimido
         int pos = atoi(argv[3]);
         insertar_fichero(argv[2], pos, argv[4]);
+        return 0;
+    }
+
+    if (strcmp(argv[1], "-d") == 0){
+        // ./mypackzip -d origen comprimido
+        insertar_directorio(argv[2], argv[3]);
         return 0;
     }
 
