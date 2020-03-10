@@ -26,6 +26,26 @@ int insertar_fichero(char * fich_origen, long Posicion, char * file_mypackzip){
 
     int sourceFileID = open(fich_origen, O_RDONLY);
     int destFileID = open(file_mypackzip, O_CREAT | O_RDWR, 0777); //el comprimido
+
+    if (sourceFileID == -1){
+        close(sourceFileID);
+        write(2, E_OPEN2, strlen(E_OPEN2));
+        _exit(ERR_OPEN2);
+    }
+
+    if (destFileID == -1){
+        close(destFileID);
+        write(2, E_OPEN, strlen(E_OPEN));
+        _exit(ERR_OPEN);
+    }
+
+    if (Posicion < -1 || Posicion > TAM){
+        close(sourceFileID);
+        close(destFileID);
+        write(2, E_POS, strlen(E_POS));
+        _exit(ERR_POS);
+    }
+
     int auxFileID;
     static char template[] = "/tmp/myFileXXXXXX";
     char fname[1024];
@@ -44,11 +64,12 @@ int insertar_fichero(char * fich_origen, long Posicion, char * file_mypackzip){
 
     strcpy(header.InfoF.FileName, fich_origen);
     header.InfoF.Tipo = 'Z';
-    header.InfoF.Compri = 'N';
+    header.InfoF.Compri = 'Y';
     header.InfoF.TamOri = lseek(sourceFileID, 0L, SEEK_END);
-    header.InfoF.TamComp = header.InfoF.TamOri;
+    header.InfoF.TamComp = lseek(destFileID, 0L, SEEK_END);
 
     lseek(sourceFileID, 0L, SEEK_SET);
+    lseek(destFileID, 0L, SEEK_SET);
     
 
     //insertando al final
