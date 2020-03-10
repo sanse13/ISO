@@ -19,7 +19,14 @@
 #define E_DIRECTORIO_MSG "Este fichero no es un directorio.\n"
 
 
-
+void quitar_primero (char* dir_fuente){
+    int i;
+    if (strcmp(&dir_fuente[0], "/") == 0){
+        for (i = 0; i < sizeof(dir_fuente); i++){
+            dir_fuente[i] = dir_fuente[i+1];
+        }
+    }
+}
 //inserta todo el contenido del dir_fuente al final del archivo file_mypackzip
 //debe insertar cada una de las entradas de tipo fichero regular del dir_fuente
 //el nombre de cada fichero regular debe contener la ruta relativa de dir_fuente
@@ -39,6 +46,7 @@ int insertar_directorio(char *dir_fuente,  char *file_mypackzip){
 
     char cwd[1024];
     chdir(dir_fuente);
+    quitar_primero(dir_fuente);
     getcwd(cwd, sizeof(cwd));
     printf("Current working dir: %s\n", cwd);
     //tiene que poner iso git/ISO
@@ -63,7 +71,7 @@ int insertar_directorio(char *dir_fuente,  char *file_mypackzip){
 
     dir = opendir(dir_fuente);
 
-    if (dir == -1){
+    if (dir == NULL){
         closedir(dir);
         write(2, E_OPEN2_MSG, strlen(E_OPEN2_MSG));
         _exit(E_OPEN2);
