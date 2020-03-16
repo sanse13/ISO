@@ -8,14 +8,16 @@
 #include "util.h"
 
 void help(){
-    printf("-e\t\t Extrae un fichero del fichero comprimido.\n");
-    printf("-i\t\t Inserta un fichero en el fichero comprimido.\n");
-    printf("-d\t\t Inserta un directorio en el fichero comprimido.\n");
+    printf("-e\t Extrae un fichero del fichero comprimido.\n");
+    printf("-i\t Inserta un fichero en el fichero comprimido.\n");
+    printf("-d\t Inserta un directorio en el fichero comprimido.\n");
+    printf("-ed\t Extrae el contenido del fichero de un comprimido.\n");
 }
 
 int main(int argc, char* argv[]){
 
     struct s_header header;
+    int res;
 
     if (strcmp(argv[1], "help") == 0) {
         help();
@@ -30,21 +32,27 @@ int main(int argc, char* argv[]){
     if (strcmp(argv[1], "-e") == 0){
         //./mypackzip -e comprimido Posicion
         int pos = atoi(argv[3]);
-        extraer_fichero(argv[2], pos);
-        return 0;
+        res = extraer_fichero(argv[2], pos);
+        if (res != 0) _exit(res); else return res;
     }
 
     if (strcmp(argv[1], "-i") == 0){
         //./mypackzip -i origen Posicion comprimido
         int pos = atoi(argv[3]);
-        insertar_fichero(argv[2], pos, argv[4]);
-        return 0;
+        res = insertar_fichero(argv[2], pos, argv[4]);
+        if (res != 0) _exit(res); else return res;
     }
 
     if (strcmp(argv[1], "-d") == 0){
         // ./mypackzip -d origen comprimido
-        insertar_directorio(argv[2], argv[3]);
-        return 0;
+        res = insertar_directorio(argv[2], argv[3]);
+        if (res != 0) _exit(res); else return res;
+    }
+
+    if (strcmp(argv[1], "-ed") == 0){
+        // ./mypackzip -ed dir_destino comprimido
+        res = extraer_directorio(argv[2], argv[3]);
+        if (res != 0) _exit(res); else return res;
     }
 
     int sourceFileID = open(argv[1], O_RDONLY);

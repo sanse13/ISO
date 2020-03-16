@@ -34,3 +34,5 @@ struct  s_header {
 int extraer_fichero(char * file_mypackzip, unsigned long Posicion);
 int insertar_fichero(char * fich_origen, long Posicion, char * file_mypackzip);
 int insertar_directorio(char *dir_fuente,  char *file_mypackzip);
+int extraer_directorio(char *dir_destino,  char *file_mypackzip);
+void quitar_primero (char* dir_fuente);

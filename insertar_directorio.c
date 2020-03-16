@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <stdbool.h>
 #include "util.h"
 
 #define E_OPEN 1
@@ -18,15 +19,6 @@
 #define E_DIRECTORIO 3
 #define E_DIRECTORIO_MSG "Este fichero no es un directorio.\n"
 
-
-void quitar_primero (char* dir_fuente){
-    int i;
-    if (strcmp(&dir_fuente[0], "/") == 0){
-        for (i = 0; i < sizeof(dir_fuente); i++){
-            dir_fuente[i] = dir_fuente[i+1];
-        }
-    }
-}
 //inserta todo el contenido del dir_fuente al final del archivo file_mypackzip
 //debe insertar cada una de las entradas de tipo fichero regular del dir_fuente
 //el nombre de cada fichero regular debe contener la ruta relativa de dir_fuente
@@ -37,53 +29,60 @@ int insertar_directorio(char *dir_fuente,  char *file_mypackzip){
     char actualpath[_PC_PATH_MAX+1];
     int ret;
 
-    int destFileID = open(file_mypackzip, O_CREAT | O_WRONLY, 0777);
+    int destFileID = open(file_mypackzip, O_CREAT | O_RDWR, 0777);
 
     if (destFileID == -1){
         write(2, E_OPEN_MSG, strlen(E_OPEN_MSG));
-        _exit(E_OPEN);
+        return(E_OPEN);
     }
 
     char cwd[1024];
     chdir(dir_fuente);
-    quitar_primero(dir_fuente);
     getcwd(cwd, sizeof(cwd));
-    printf("Current working dir: %s\n", cwd);
-    //tiene que poner iso git/ISO
+
     char directorio[512];
     strcpy(directorio, getcwd(cwd, sizeof(cwd)));
-    printf("%s\n", directorio);
+    quitar_primero(directorio);
     char linea[512];
     
-
     DIR *dir;
     struct dirent *entrada;
+    struct s_header header;
 
     ret = stat(dir_fuente, &statVar);
 
     if (!S_ISDIR(statVar.st_mode)){
+        close(destFileID);
         write(2, E_DIRECTORIO_MSG, strlen(E_DIRECTORIO_MSG));
-        _exit(E_DIRECTORIO);
+        return(E_DIRECTORIO);
     }
 
-    //corregir errores del open del destFileID
-    lseek(destFileID, SEEK_END, 0L);
+    int tamComp = lseek(destFileID, 0L, SEEK_END);
+    lseek(destFileID, 0L, SEEK_SET);
 
     dir = opendir(dir_fuente);
 
     if (dir == NULL){
         closedir(dir);
+        close(destFileID);
         write(2, E_OPEN2_MSG, strlen(E_OPEN2_MSG));
-        _exit(E_OPEN2);
+        return(E_OPEN2);
     }
 
     while ((entrada = readdir(dir)) != NULL){
         stat(entrada->d_name, &statVar);
-        //incluir solo los regulares
+
         if (S_ISREG(statVar.st_mode)){
-            sprintf(linea, "%s %s\n", directorio, entrada->d_name);
-            write(destFileID, linea, strlen(linea));    
+            strcpy(header.InfoF.FileName, directorio);
+            strcat(header.InfoF.FileName, "/");
+            strcat(header.InfoF.FileName, entrada->d_name);
+            header.InfoF.Tipo = 'Z';
+            header.InfoF.Compri = 'Y';
+            header.InfoF.TamOri = statVar.st_size;
+            header.InfoF.TamComp = tamComp;
+            write(destFileID, &header, sizeof(header));
         }
+
     }
 
     closedir(dir);
