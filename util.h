@@ -1,3 +1,6 @@
+#include<termios.h>
+#include<sys/ioctl.h>
+
 #define MAX_FILE_NAME   256
 #define RESTO_HEADER (TAM_S_HEADER - TAM_S_INFO)
 #define TAM_S_HEADER    512
@@ -14,7 +17,6 @@
 #define ERR_MSG2 "No existe el fichero de origen\n"
 #define ERR_MSG3 "No se dispone de permisos para esta operación. No se dispone de permisos para crear o modificar fich_destino\n"
 #define ERR_MSG4 "Otro tipo de errores\n"
-
 
 struct s_info {
            char Tipo;                       // ='Z'
@@ -36,3 +38,6 @@ int insertar_fichero(char * fich_origen, long Posicion, char * file_mypackzip);
 int insertar_directorio(char *dir_fuente,  char *file_mypackzip);
 int extraer_directorio(char *dir_destino,  char *file_mypackzip);
 void quitar_primero (char* dir_fuente);
+void setTermNoCanon(struct termios *savedTM);
+void restoreTerm(struct termios *savedTM);
+void eco(struct termios tm);
