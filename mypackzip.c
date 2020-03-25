@@ -84,7 +84,7 @@ int main(int argc, char* argv[]){
         }
         printf("Atencion, ¿esta seguro de que desea cambiar el modo de la terminal a no canonico?\n");
         printf("Pulse 'y' para continuar, 'n' para abortar.\n");
-        scanf("%c\n", &respuesta);
+        scanf("%c", &respuesta);
         if(respuesta == 'y'){
             printf("Terminal en modo no canonico\n.");
             setTermNoCanon(&tm);
@@ -96,7 +96,7 @@ int main(int argc, char* argv[]){
 
     if (strcmp(argv[1], "-pr") == 0){
         printf("Regresando a modo canonico.\n");
-        restoreTerm(&tm);
+        eco(tm);
         return 0;
     }
 
