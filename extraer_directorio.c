@@ -42,9 +42,11 @@ int extraer_directorio(char *dir_destino,  char *file_mypackzip)
     char insertar[256];
     strcpy(ruta, dir_destino);
 
+    
+    
+
     int sourceFileID = open(file_mypackzip, O_RDONLY);
 
-    
     if (sourceFileID == -1){
         close(sourceFileID);
         write(2, E_OPEN_MSG, strlen(E_OPEN_MSG));
@@ -57,7 +59,18 @@ int extraer_directorio(char *dir_destino,  char *file_mypackzip)
     //necesito coger la ruta
 
     if (dir == NULL){ //cuando no existe el directorio
-        mkdir(dir_destino, S_IRWXU | S_IRWXG);
+        if (mkdir(dir_destino, S_IRWXU | S_IRWXG) == -1){
+            write(2, E_CREAT_DIR_MSG, strlen(E_CREAT_DIR_MSG));
+            return E_CREAT_DIR;
+        }
+    }
+
+    ret = stat(dir_destino, &statVar);
+    if (!S_ISDIR(statVar.st_mode)){
+        write(2, E_DIR_MSG, strlen(E_DIR_MSG));
+        return E_DIR;
+    }
+    
         dir = opendir(dir_destino);
         
         quitar_primero(ruta);
@@ -67,11 +80,9 @@ int extraer_directorio(char *dir_destino,  char *file_mypackzip)
         {
             
             if (strncmp(ruta, header.InfoF.FileName, strlen(ruta)-1) == 0){
-                printf("FileName: %s\n", header.InfoF.FileName);
-                strcpy(insertar, "/");
+                strcpy(insertar, "");
                 strcat(insertar, header.InfoF.FileName);
-                printf("insertar es: %s\n", insertar);
-                auxFileID = open(insertar, O_CREAT, 0777);
+                auxFileID = open(insertar, O_CREAT, 0644);
             }
             
             
@@ -82,30 +93,6 @@ int extraer_directorio(char *dir_destino,  char *file_mypackzip)
 
         close(sourceFileID);
         closedir(dir);
-    } else {        //cuando existe el directorio
-        ret = stat(dir_destino, &statVar);
-        strcpy(ruta, dir_destino);
-        quitar_primero(ruta);
-
-        while ( (n = read(sourceFileID, &header, sizeof(header))) >0)
-        {
-            
-            if (strncmp(ruta, header.InfoF.FileName, strlen(ruta)-1) == 0){
-                printf("FileName: %s\n", header.InfoF.FileName);
-                strcpy(insertar, "/");
-                strcat(insertar, header.InfoF.FileName);
-                printf("insertar es: %s\n", insertar);
-                auxFileID = open(insertar, O_CREAT, 0777);
-            }
-            
-            
-            lseek(sourceFileID, header.InfoF.TamComp, SEEK_CUR);
-        }
-
-
-        closedir(dir);
-        close(sourceFileID);
-    }
     return 0;
 
 }

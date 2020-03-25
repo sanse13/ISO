@@ -30,20 +30,20 @@ int insertar_fichero(char * fich_origen, long Posicion, char * file_mypackzip){
     if (sourceFileID == -1){
         close(sourceFileID);
         write(2, E_OPEN2, strlen(E_OPEN2));
-        _exit(ERR_OPEN2);
+        return(ERR_OPEN2);
     }
 
     if (destFileID == -1){
         close(destFileID);
         write(2, E_OPEN, strlen(E_OPEN));
-        _exit(ERR_OPEN);
+        return(ERR_OPEN);
     }
 
     if (Posicion < -1 || Posicion > TAM){
         close(sourceFileID);
         close(destFileID);
         write(2, E_POS, strlen(E_POS));
-        _exit(ERR_POS);
+        return(ERR_POS);
     }
 
     int auxFileID;

@@ -6,15 +6,20 @@
 #include <sys/types.h>
 #include <errno.h>
 #include "util.h"
+#include <stdio.h>
+#include <string.h>
+#include <assert.h>
+#include "zlib.h"
 
 void help(){
-    printf("-e\t Extrae un fichero del fichero comprimido.\n");
-    printf("-i\t Inserta un fichero en el fichero comprimido.\n");
-    printf("-d\t Inserta un directorio en el fichero comprimido.\n");
-    printf("-ed\t Extrae el contenido del fichero de un comprimido.\n");
-    printf("-p\t Cambia el modo de la terminal a no canonico.\n");
-    printf("-pr\t Recupera el estado de la terminal al modo canonico.\n");
+    printf("-e\t Extrae un fichero del fichero comprimido. (./mypackzip -e file_mypackzip Posicion)\n");
+    printf("-i\t Inserta un fichero en el fichero comprimido. (./mypackzip -i fich_origen Posicion file_mypackzip)\n");
+    printf("-d\t Inserta un directorio en el fichero comprimido. (./mypackzip -d dir_fuente comprimido)\n");
+    printf("-ed\t Extrae el contenido del fichero de un comprimido. (./mypackzip -ed dir_destino comprimido)\n");
+    printf("-p\t Cambia el modo de la terminal a no canonico. (./mypackzip -p)\n");
+    printf("-pr\t Recupera el estado de la terminal al modo canonico. ()\n");
     printf("-c\t Eco.\n");
+    printf("-f\t Funcionalidad para comprimir.\n");
 }
 
 int main(int argc, char* argv[]){
@@ -22,7 +27,7 @@ int main(int argc, char* argv[]){
     struct s_header header;
     struct termios tm;
     char respuesta;
-    int res;
+    int res, ret;
 
     if (strcmp(argv[1], "help") == 0) {
         help();
@@ -31,6 +36,10 @@ int main(int argc, char* argv[]){
 
     if (strcmp(argv[1], "-e") == 0){
         //./mypackzip -e comprimido Posicion
+        if (argc != 4){
+            write(2, ERR_MSG1, strlen(ERR_MSG1));
+            _exit(ERR1);
+        }
         int pos = atoi(argv[3]);
         res = extraer_fichero(argv[2], pos);
         if (res != 0) _exit(res); else return res;
@@ -38,6 +47,10 @@ int main(int argc, char* argv[]){
 
     if (strcmp(argv[1], "-i") == 0){
         //./mypackzip -i origen Posicion comprimido
+        if (argc != 5){
+            write(2, ERR_MSG1, strlen(ERR_MSG1));
+            _exit(ERR1);
+        }
         int pos = atoi(argv[3]);
         res = insertar_fichero(argv[2], pos, argv[4]);
         if (res != 0) _exit(res); else return res;
@@ -45,17 +58,30 @@ int main(int argc, char* argv[]){
 
     if (strcmp(argv[1], "-d") == 0){
         // ./mypackzip -d origen comprimido
+        if (argc != 4){
+            write(2, ERR_MSG1, strlen(ERR_MSG1));
+            _exit(ERR1);
+        }
         res = insertar_directorio(argv[2], argv[3]);
         if (res != 0) _exit(res); else return res;
     }
 
     if (strcmp(argv[1], "-ed") == 0){
         // ./mypackzip -ed dir_destino comprimido
+        if (argc != 4){
+            write(2, ERR_MSG1, strlen(ERR_MSG1));
+            _exit(ERR1);
+        }
         res = extraer_directorio(argv[2], argv[3]);
         if (res != 0) _exit(res); else return res;
     }
 
     if (strcmp(argv[1], "-p") == 0){
+        // ./mypackzip -p
+        if (argc != 2){
+            write(2, ERR_MSG1, strlen(ERR_MSG1));
+            _exit(ERR1);
+        }
         printf("Atencion, ¿esta seguro de que desea cambiar el modo de la terminal a no canonico?\n");
         printf("Pulse 'y' para continuar, 'n' para abortar.\n");
         scanf("%c\n", &respuesta);
@@ -78,6 +104,16 @@ int main(int argc, char* argv[]){
         printf("Eco.\n");
         eco(tm);
         return 0;
+    }
+
+    if (strcmp(argv[1], "-f") == 0){
+        printf("Comprimiendo...\n");
+        //def(int  fd_source, int fd_dest, int level)
+        // ./mypackzip -c origen destino
+        ret = def(0, 1, Z_DEFAULT_COMPRESSION);
+        if (ret != Z_OK)
+            zerr(ret);
+        return ret;
     }
 
     if (argc < 3){

@@ -41,3 +41,5 @@ void quitar_primero (char* dir_fuente);
 void setTermNoCanon(struct termios *savedTM);
 void restoreTerm(struct termios *savedTM);
 void eco(struct termios tm);
+int def(int  fd_source, int fd_dest, int level);
+void zerr(int ret);

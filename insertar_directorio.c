@@ -37,12 +37,12 @@ int insertar_directorio(char *dir_fuente,  char *file_mypackzip){
     }
 
     char cwd[1024];
-    chdir(dir_fuente);
+    //chdir(dir_fuente);
     getcwd(cwd, sizeof(cwd));
+    char directorio3[512];
+ //   strcpy(directorio, getcwd(cwd, sizeof(cwd)));
 
-    char directorio[512];
-    strcpy(directorio, getcwd(cwd, sizeof(cwd)));
-    quitar_primero(directorio);
+    
     char linea[512];
     
     DIR *dir;
@@ -69,11 +69,18 @@ int insertar_directorio(char *dir_fuente,  char *file_mypackzip){
         return(E_OPEN2);
     }
 
+    chdir(dir_fuente);
+    quitar_primero(dir_fuente);
+    if (strcmp(&dir_fuente[strlen(dir_fuente)-1], "/") == 0){ 
+        strcpy(directorio3, "");
+        strncat(directorio3, dir_fuente, strlen(dir_fuente)-1);
+        strcpy(dir_fuente, directorio3);
+    }
+    
     while ((entrada = readdir(dir)) != NULL){
         stat(entrada->d_name, &statVar);
-
         if (S_ISREG(statVar.st_mode)){
-            strcpy(header.InfoF.FileName, directorio);
+            strcpy(header.InfoF.FileName, dir_fuente);
             strcat(header.InfoF.FileName, "/");
             strcat(header.InfoF.FileName, entrada->d_name);
             header.InfoF.Tipo = 'Z';
