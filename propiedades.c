@@ -26,7 +26,8 @@ void restoreTerm(struct termios *savedTM){
     tcsetattr(0, TCSANOW, savedTM);
 }
 
-void eco(struct termios tm){
+void eco(){
+    struct termios tm;
     ioctl(0, TCGETA, tm);
     if(tm.c_lflag& ECHO)
         tm.c_lflag &= ~ECHO;
