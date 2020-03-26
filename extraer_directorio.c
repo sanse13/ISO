@@ -80,12 +80,11 @@ int extraer_directorio(char *dir_destino,  char *file_mypackzip)
         {
             if (strncmp(ruta, header.InfoF.FileName, strlen(ruta)-1) == 0){
                 
-                auxFileID = open(header.InfoF.FileName, O_CREAT, 0644);
+                auxFileID = open(header.InfoF.FileName, O_CREAT | O_WRONLY, 0644);
                 n = read(sourceFileID, buf, header.InfoF.TamOri);
                 write(auxFileID, buf, n);
-            } else
-
-            lseek(sourceFileID, header.InfoF.TamOri, SEEK_CUR);
+            } 
+            else lseek(sourceFileID, header.InfoF.TamOri, SEEK_CUR);
             
         }
 
