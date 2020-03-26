@@ -36,8 +36,9 @@ int extraer_directorio(char *dir_destino,  char *file_mypackzip)
     struct stat statVar;
     struct dirent *entrada;
     struct s_header header;
-    int ret, n, auxFileID;
+    int ret, n, n_aux, auxFileID;
     char ruta[512];
+    char buf[TAM_BUFFER];
     char fileName[256];
     char insertar[256];
     strcpy(ruta, dir_destino);
@@ -74,24 +75,22 @@ int extraer_directorio(char *dir_destino,  char *file_mypackzip)
         dir = opendir(dir_destino);
         
         quitar_primero(ruta);
-        
         //meter el bucle para sacar el header
         while ( (n = read(sourceFileID, &header, sizeof(header))) >0)
         {
-            
             if (strncmp(ruta, header.InfoF.FileName, strlen(ruta)-1) == 0){
-                strcpy(insertar, "");
-                strcat(insertar, header.InfoF.FileName);
-                auxFileID = open(insertar, O_CREAT, 0644);
-            }
+                
+                auxFileID = open(header.InfoF.FileName, O_CREAT, 0644);
+                n = read(sourceFileID, buf, header.InfoF.TamOri);
+                write(auxFileID, buf, n);
+            } else
+
+            lseek(sourceFileID, header.InfoF.TamOri, SEEK_CUR);
             
-            
-            lseek(sourceFileID, header.InfoF.TamComp, SEEK_CUR);
         }
 
-        //meter en el directorio todos los ficheros relacionados con la ruta
-
         close(sourceFileID);
+        if (auxFileID > 2) close(auxFileID);
         closedir(dir);
     return 0;
 

@@ -26,10 +26,13 @@ int insertar_directorio(char *dir_fuente,  char *file_mypackzip){
 
     struct stat statVar;
     char fichero[TAM_BUFFER];
+    char buf[TAM_BUFFER];
     char actualpath[_PC_PATH_MAX+1];
     int ret;
+    int n, sourceFileID;
 
     int destFileID = open(file_mypackzip, O_CREAT | O_RDWR, 0777);
+    lseek(destFileID, 0L, SEEK_END);
 
     if (destFileID == -1){
         write(2, E_OPEN_MSG, strlen(E_OPEN_MSG));
@@ -58,7 +61,6 @@ int insertar_directorio(char *dir_fuente,  char *file_mypackzip){
     }
 
     int tamComp = lseek(destFileID, 0L, SEEK_END);
-    lseek(destFileID, 0L, SEEK_SET);
 
     dir = opendir(dir_fuente);
 
@@ -80,6 +82,7 @@ int insertar_directorio(char *dir_fuente,  char *file_mypackzip){
     while ((entrada = readdir(dir)) != NULL){
         stat(entrada->d_name, &statVar);
         if (S_ISREG(statVar.st_mode)){
+            sourceFileID = open(entrada->d_name, O_RDONLY);
             strcpy(header.InfoF.FileName, dir_fuente);
             strcat(header.InfoF.FileName, "/");
             strcat(header.InfoF.FileName, entrada->d_name);
@@ -88,6 +91,8 @@ int insertar_directorio(char *dir_fuente,  char *file_mypackzip){
             header.InfoF.TamOri = statVar.st_size;
             header.InfoF.TamComp = tamComp;
             write(destFileID, &header, sizeof(header));
+            while ( (n = read(sourceFileID, buf, TAM_BUFFER)) > 0)
+                write(destFileID, buf, n);
         }
 
     }
