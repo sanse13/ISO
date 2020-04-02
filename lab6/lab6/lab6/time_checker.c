@@ -1,6 +1,6 @@
 /* time_checker.c */
 
-/* ./time_checker 3 2 6 sleep 10 */
+/* Aitor Urkiza, Jon Villanueva, Adrián San Segundo */
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -23,14 +23,23 @@ main(int argc, char *argv[])
 
    while(loops > 0){
       
-  
+      if ((clockid = fork()) == 0) execlp("despertador", "despertador", argv[3], NULL);
       if ((childid = fork()) == 0) execvp(argv[4], &(argv[4]));
 
 
       t = time(0);
       id = wait(NULL);
+      if (id == childid) {   /* child finishes first; stop clock */
+         kill(clockid, SIGKILL);
+         wait(NULL);
+         aux = 0;
+      } else {   /* clock finishes first; force child to finish */
+         kill(childid, SIGKILL);
+         wait(NULL);
+         mas++;
+         aux = -1;
+      }
       t = time(0) - t;
-      printf("TIME: %d\n", t);
       if (t < minimo) menos++;
       if (t > maximo) mas++;
       if (t > minimo && t < maximo) ok++;
