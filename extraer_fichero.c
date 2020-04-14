@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <errno.h>
 #include "util.h"
 
@@ -20,10 +21,8 @@ int extraer_fichero(char * file_mypackzip, unsigned long Posicion)
 {
     int sourceFileID, destFileID, actual_reg, n;
     struct s_header header;
+    struct stat statVar;
     char buf[TAM_BUFFER];
-
-    //mensajes de error no
-    //no usar exit
 
     if ( (sourceFileID = open(file_mypackzip, O_RDONLY)) == -1 )
     {
@@ -38,7 +37,7 @@ int extraer_fichero(char * file_mypackzip, unsigned long Posicion)
             write(2, E_POS, strlen(E_POS));
             return ERR_POS;
         }
-        //lseek o read??
+
         lseek(sourceFileID, header.InfoF.TamOri, SEEK_CUR);
     }
 
@@ -46,13 +45,20 @@ int extraer_fichero(char * file_mypackzip, unsigned long Posicion)
 
     printf("FileName: %s\n", header.InfoF.FileName);
 
-    //crear fichero con el contenido del fichero extraido
+    lstat(header.InfoF.FileName, &statVar);
+
+    if (header.InfoF.Tipo == 'S'){
+        symlink(header.InfoF.OriginalName, header.InfoF.FileName);
+        close(sourceFileID);
+    } else {
+
     destFileID = open(header.InfoF.FileName, O_CREAT | O_WRONLY, 0644);
     n = read(sourceFileID, buf, header.InfoF.TamOri);
     write(destFileID, buf, n);
 
     close(sourceFileID);
     close(destFileID);
+    }
     
     return 0;
 

@@ -27,8 +27,10 @@ int insertar_directorio(char *dir_fuente,  char *file_mypackzip){
     struct stat statVar;
     char fichero[TAM_BUFFER];
     char buf[TAM_BUFFER];
+    char buffer[50];
+    char res [50];
     char actualpath[_PC_PATH_MAX+1];
-    int ret;
+    int ret, tam;
     int n, sourceFileID;
 
     int destFileID = open(file_mypackzip, O_CREAT | O_RDWR, 0777);
@@ -80,20 +82,45 @@ int insertar_directorio(char *dir_fuente,  char *file_mypackzip){
     }
     
     while ((entrada = readdir(dir)) != NULL){
-        stat(entrada->d_name, &statVar);
-        if (S_ISREG(statVar.st_mode)){
-            sourceFileID = open(entrada->d_name, O_RDONLY);
-            strcpy(header.InfoF.FileName, dir_fuente);
-            strcat(header.InfoF.FileName, "/");
-            strcat(header.InfoF.FileName, entrada->d_name);
+        
+        
+        lstat(entrada->d_name, &statVar);
+        
+        sourceFileID = open(entrada->d_name, O_RDONLY);
+        strcpy(header.InfoF.FileName, dir_fuente);
+        strcat(header.InfoF.FileName, "/");
+        strcat(header.InfoF.FileName, entrada->d_name);
+        
+        switch (statVar.st_mode & S_IFMT)
+        {
+            
+        case S_IFREG:
             header.InfoF.Tipo = 'Z';
-            header.InfoF.Compri = 'Y';
-            header.InfoF.TamOri = statVar.st_size;
-            header.InfoF.TamComp = tamComp;
-            write(destFileID, &header, sizeof(header));
-            while ( (n = read(sourceFileID, buf, TAM_BUFFER)) > 0)
-                write(destFileID, buf, n);
+            strcpy(header.InfoF.OriginalName, "");
+            break;
+        
+        case S_IFLNK:
+            header.InfoF.Tipo = 'S';
+            tam = readlink(entrada->d_name, buffer, 50);
+            strncpy(header.InfoF.OriginalName, buffer, tam);
+            break;
+
+        default:
+            
+        break;
+        
         }
+
+        header.InfoF.Compri = 'N';
+        header.InfoF.TamOri = statVar.st_size;
+        header.InfoF.TamComp = tamComp;
+
+        if (S_ISREG(statVar.st_mode) || S_ISLNK(statVar.st_mode)){
+        write(destFileID, &header, sizeof(header));
+        while ( (n = read(sourceFileID, buf, TAM_BUFFER)) > 0)
+            write(destFileID, buf, n);
+        }
+         
 
     }
 

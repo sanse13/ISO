@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <errno.h>
 #include "util.h"
 
@@ -20,12 +21,24 @@
 //insertar con el header??
 
 int insertar_fichero(char * fich_origen, long Posicion, char * file_mypackzip){
-
+    
     struct s_header header;
     struct s_header header2;
+    struct stat statVar;
+    int ret, tam;
+    
+    char buffer[20];
 
     int sourceFileID = open(fich_origen, O_RDONLY);
     int destFileID = open(file_mypackzip, O_CREAT | O_RDWR, 0777); //el comprimido
+   
+    char res[50];
+
+    ret = lstat(fich_origen, &statVar);
+    if (S_ISLNK(statVar.st_mode)){
+        tam = readlink(fich_origen, buffer, 20);
+        strncpy(res, buffer, tam);
+    }
 
     if (sourceFileID == -1){
         close(sourceFileID);
@@ -62,11 +75,18 @@ int insertar_fichero(char * fich_origen, long Posicion, char * file_mypackzip){
     lseek(auxFileID, 0L, SEEK_SET);
     lseek(destFileID, 0L, SEEK_SET);
 
-    strcpy(header.InfoF.FileName, fich_origen);
-    header.InfoF.Tipo = 'Z';
-    header.InfoF.Compri = 'Y';
+    strcpy(header.InfoF.FileName, fich_origen); /*guarda el filename del fichero origen */
+    if (S_ISLNK(statVar.st_mode)) {header.InfoF.Tipo = 'S'; strcpy(header.InfoF.OriginalName, res); }
+    else {
+        header.InfoF.Tipo = 'Z';
+        strcpu(header.InfoF.OriginalName, "");
+    }
+
+    header.InfoF.Compri = 'N';
     header.InfoF.TamOri = lseek(sourceFileID, 0L, SEEK_END);
     header.InfoF.TamComp = lseek(destFileID, 0L, SEEK_END);
+    
+  
 
     lseek(sourceFileID, 0L, SEEK_SET);
     lseek(destFileID, 0L, SEEK_SET);
@@ -95,7 +115,7 @@ int insertar_fichero(char * fich_origen, long Posicion, char * file_mypackzip){
         while ( (n = read(sourceFileID, buf, TAM_BUFFER)) > 0)
             write(destFileID, buf, n);
 
-        while ((n = read(auxFileID, buf, TAM_BUFFER))>0)
+        while ((n = read(auxFileID, buf, TAM_BUFFER)) > 0)
             write(destFileID, buf, n);
         
     }

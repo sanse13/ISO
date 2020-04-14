@@ -66,7 +66,7 @@ int extraer_directorio(char *dir_destino,  char *file_mypackzip)
         }
     }
 
-    ret = stat(dir_destino, &statVar);
+    ret = lstat(dir_destino, &statVar);
     if (!S_ISDIR(statVar.st_mode)){
         write(2, E_DIR_MSG, strlen(E_DIR_MSG));
         return E_DIR;
@@ -79,10 +79,14 @@ int extraer_directorio(char *dir_destino,  char *file_mypackzip)
         while ( (n = read(sourceFileID, &header, sizeof(header))) >0)
         {
             if (strncmp(ruta, header.InfoF.FileName, strlen(ruta)-1) == 0){
-                
-                auxFileID = open(header.InfoF.FileName, O_CREAT | O_WRONLY, 0644);
-                n = read(sourceFileID, buf, header.InfoF.TamOri);
-                write(auxFileID, buf, n);
+                if (header.InfoF.Tipo == 'S'){
+                    symlink(header.InfoF.OriginalName, header.InfoF.FileName);
+                } 
+                if (header.InfoF.Tipo == 'Z') {
+                    auxFileID = open(header.InfoF.FileName, O_CREAT | O_WRONLY, 0644);
+                    n = read(sourceFileID, buf, header.InfoF.TamOri);
+                    write(auxFileID, buf, n);
+                }
             } 
             else lseek(sourceFileID, header.InfoF.TamOri, SEEK_CUR);
             

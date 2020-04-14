@@ -29,6 +29,11 @@ int main(int argc, char* argv[]){
     char respuesta;
     int res, ret;
 
+    if (argc == 1){
+        write(2, ERR_MSG5, strlen(ERR_MSG5));
+        _exit(ERR5);
+    }
+
     if (strcmp(argv[1], "help") == 0) {
         help();
         return 0;
