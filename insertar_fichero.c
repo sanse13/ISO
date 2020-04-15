@@ -31,7 +31,6 @@ int insertar_fichero(char * fich_origen, long Posicion, char * file_mypackzip){
 
     int sourceFileID = open(fich_origen, O_RDONLY);
     int destFileID = open(file_mypackzip, O_CREAT | O_RDWR, 0777); //el comprimido
-   
     char res[50];
 
     ret = lstat(fich_origen, &statVar);
@@ -79,12 +78,12 @@ int insertar_fichero(char * fich_origen, long Posicion, char * file_mypackzip){
     if (S_ISLNK(statVar.st_mode)) {header.InfoF.Tipo = 'S'; strcpy(header.InfoF.OriginalName, res); }
     else {
         header.InfoF.Tipo = 'Z';
-        strcpu(header.InfoF.OriginalName, "");
+        strcpy(header.InfoF.OriginalName, "");
     }
 
     header.InfoF.Compri = 'N';
     header.InfoF.TamOri = lseek(sourceFileID, 0L, SEEK_END);
-    header.InfoF.TamComp = lseek(destFileID, 0L, SEEK_END);
+    header.InfoF.TamComp = header.InfoF.TamOri;
     
   
 
@@ -94,7 +93,7 @@ int insertar_fichero(char * fich_origen, long Posicion, char * file_mypackzip){
 
     //insertando al final
     if (Posicion == -1){ //inserta al final
-
+    
     lseek(destFileID, 0L, SEEK_END);
 
     write(destFileID, &header, sizeof(header));

@@ -44,8 +44,7 @@ int extraer_fichero(char * file_mypackzip, unsigned long Posicion)
     read(sourceFileID, &header, sizeof(header));
 
     printf("FileName: %s\n", header.InfoF.FileName);
-
-    lstat(header.InfoF.FileName, &statVar);
+    printf("Tipo: %c\n", header.InfoF.Tipo);
 
     if (header.InfoF.Tipo == 'S'){
         symlink(header.InfoF.OriginalName, header.InfoF.FileName);

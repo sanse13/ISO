@@ -113,7 +113,7 @@ int insertar_directorio(char *dir_fuente,  char *file_mypackzip){
 
         header.InfoF.Compri = 'N';
         header.InfoF.TamOri = statVar.st_size;
-        header.InfoF.TamComp = tamComp;
+        header.InfoF.TamComp = header.InfoF.TamOri;
 
         if (S_ISREG(statVar.st_mode) || S_ISLNK(statVar.st_mode)){
         write(destFileID, &header, sizeof(header));
