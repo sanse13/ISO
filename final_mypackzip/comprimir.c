@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <assert.h>
 #include "zlib.h"
+#include "util.h"
 
 #if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
 #  include <fcntl.h>
@@ -15,14 +18,43 @@
 int Error_RW = 0; // Read error(1)   Write error(2)
 
 
-int def(int  fd_source, int fd_dest, int level)
+int def(int  fd_source, int fd_dest, int level, char * fich_origen, char * dest_file)
 {
-    
+
     int ret, ret2, flush;
     unsigned have;
     z_stream strm;
     unsigned char in[CHUNK];
     unsigned char out[CHUNK];
+
+    struct s_header header;
+    struct stat statVar;
+    struct stat statVar2;
+    char buf[50];
+    char res[50];
+    char buffer[TAM_BUFFER];
+    int tam, n;
+    
+    strcpy(header.InfoF.FileName, fich_origen);
+    lstat(fich_origen, &statVar);
+    lstat(dest_file, &statVar2);
+    if (S_ISLNK(statVar.st_mode)){
+        header.InfoF.Tipo = 'S';
+        tam = readlink(fich_origen, buf, 50);
+        strncpy(res, buf, tam);
+        strcpy(header.InfoF.OriginalName, res);
+
+    } else {
+        header.InfoF.Tipo = 'Z';
+        strcpy(header.InfoF.OriginalName, "");
+    }
+
+    header.InfoF.Compri = 'Y';
+    header.InfoF.TamOri = statVar.st_size;
+    header.InfoF.TamComp = statVar2.st_size;
+    write(fd_dest, &header, sizeof(header));
+    n = read(fd_source, buffer, TAM_BUFFER);
+    write(fd_dest, buffer, n);
 
     /* allocate deflate state */
     strm.zalloc = Z_NULL;

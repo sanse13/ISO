@@ -116,7 +116,7 @@ int main(int argc, char* argv[]){
         printf("Comprimiendo...\n");
         sourceFileID = open(argv[2], O_RDONLY);
         destFileID = open(argv[3], O_CREAT | O_RDWR, 0777);
-        ret = def(sourceFileID, destFileID, Z_DEFAULT_COMPRESSION);
+        ret = def(sourceFileID, destFileID, Z_DEFAULT_COMPRESSION, argv[2], argv[3]);
         if (ret != Z_OK)
             zerr(ret);
         return ret;
