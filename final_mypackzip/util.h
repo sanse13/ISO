@@ -15,7 +15,7 @@
 #define ERR4 4
 #define ERR5 5
 
-#define ERR_MSG1 "Error en los argumentos.\nPuedes usar <./mypackzip help>\n"
+#define ERR_MSG1 "Error en los argumentos.\nPuedes usar <./mypackzip -help>\n"
 #define ERR_MSG2 "No existe el fichero de origen\n"
 #define ERR_MSG3 "No se dispone de permisos para esta operación. No se dispone de permisos para crear o modificar fich_destino\n"
 #define ERR_MSG4 "Otro tipo de errores\n"
