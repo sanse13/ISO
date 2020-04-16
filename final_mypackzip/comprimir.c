@@ -52,6 +52,7 @@ int def(int  fd_source, int fd_dest, int level, char * fich_origen, char * dest_
     header.InfoF.Compri = 'Y';
     header.InfoF.TamOri = statVar.st_size;
     header.InfoF.TamComp = statVar2.st_size;
+    lseek(fd_dest, 0L, SEEK_END);
     write(fd_dest, &header, sizeof(header));
     n = read(fd_source, buffer, TAM_BUFFER);
     write(fd_dest, buffer, n);
