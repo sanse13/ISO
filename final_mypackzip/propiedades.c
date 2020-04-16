@@ -28,10 +28,10 @@ void restoreTerm(struct termios *savedTM){
 
 void eco(){
     struct termios tm;
-    ioctl(0, TIOCGETA, tm);
+    ioctl(0, TCGETA, tm);
     if(tm.c_lflag& ECHO)
         tm.c_lflag &= ~ECHO;
     else
         tm.c_lflag |= ECHO;
-    ioctl(0, TIOCSETA, &tm);
+    ioctl(0, TCSETA, &tm);
 }
