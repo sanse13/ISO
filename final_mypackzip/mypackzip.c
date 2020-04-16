@@ -17,8 +17,8 @@ void help(){
     printf("-d\t Inserta un directorio en el fichero comprimido. \t<./mypackzip -d dir_fuente comprimido>\n");
     printf("-ed\t Extrae el contenido del fichero de un comprimido. \t<./mypackzip -ed dir_destino comprimido>\n");
     printf("-p\t Cambia el modo de la terminal a no canonico. \t\t<./mypackzip -p>\n");
-    printf("-pr\t Recupera el estado de la terminal al modo canonico. \t<>\n");
-    printf("-c\t Eco.\n");
+    printf("-pr\t Recupera el estado de la terminal al modo canonico. \t<./mypackzip -pr>\n");
+    printf("-c\t Eco. \t\t\t\t\t\t\t<./mypackzip -c>\n");
     printf("-f\t Funcionalidad para comprimir. \t\t\t\t<./mypackzip -f FICH_ORIGEN COMPRIMIDO>\n");
 }
 
