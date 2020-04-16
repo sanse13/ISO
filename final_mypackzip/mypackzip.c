@@ -120,7 +120,7 @@ int main(int argc, char* argv[]){
         if (strcmp(argv[1], "-f") == 0){
             printf("Comprimiendo...\n");
             sourceFileID = open(argv[2], O_RDONLY);
-            destFileID = open(argv[3], O_CREAT | O_RDWR, 0777);
+            destFileID = open(argv[3], O_CREAT | O_RDWR, 0644);
             ret = def(sourceFileID, destFileID, Z_DEFAULT_COMPRESSION, argv[2], argv[3]);
             if (ret != Z_OK)
                 zerr(ret);
