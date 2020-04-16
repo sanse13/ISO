@@ -126,6 +126,9 @@ int main(int argc, char* argv[]){
                 zerr(ret);
             return ret;
         }
+
+        printf("comando no reconocido, use ./mypackzip -help para ver las opciones\n");
+        return 0;
     } else {
 
         if (argc < 3){
