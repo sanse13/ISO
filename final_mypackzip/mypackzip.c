@@ -14,12 +14,12 @@
 void help(){
     printf("-e\t Extrae un fichero del fichero comprimido. \t\t<./mypackzip -e file_mypackzip Posicion>\n");
     printf("-i\t Inserta un fichero en el fichero comprimido. \t\t<./mypackzip -i fich_origen Posicion file_mypackzip>\n");
-    printf("-d\t Inserta un directorio en el fichero comprimido. \t\t<./mypackzip -d dir_fuente comprimido>\n");
-    printf("-ed\t Extrae el contenido del fichero de un comprimido. \t\t<./mypackzip -ed dir_destino comprimido>\n");
+    printf("-d\t Inserta un directorio en el fichero comprimido. \t<./mypackzip -d dir_fuente comprimido>\n");
+    printf("-ed\t Extrae el contenido del fichero de un comprimido. \t<./mypackzip -ed dir_destino comprimido>\n");
     printf("-p\t Cambia el modo de la terminal a no canonico. \t\t<./mypackzip -p>\n");
-    printf("-pr\t Recupera el estado de la terminal al modo canonico. \t\t<>\n");
+    printf("-pr\t Recupera el estado de la terminal al modo canonico. \t<>\n");
     printf("-c\t Eco.\n");
-    printf("-f\t Funcionalidad para comprimir. \t\t<./mypackzip -f FICH_ORIGEN COMPRIMIDO>\n");
+    printf("-f\t Funcionalidad para comprimir. \t\t\t\t<./mypackzip -f FICH_ORIGEN COMPRIMIDO>\n");
 }
 
 int main(int argc, char* argv[]){
