@@ -1,4 +1,5 @@
 /* Jon Villanueva y Adrian San Segundo */
+/* este programa es equivalente a who | grep acaf00 | wc -l */ 
 
 #include <stdio.h>
 #include <stdlib.h>
