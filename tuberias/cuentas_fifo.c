@@ -1,5 +1,6 @@
 /* Jon Villanueva y Adrian San Segundo */
 /* este programa es equivalente a who | grep acaf00 | wc -l */ 
+/* ejercicio 2 de Tuberías */
 
 #include <stdio.h>
 #include <stdlib.h>
